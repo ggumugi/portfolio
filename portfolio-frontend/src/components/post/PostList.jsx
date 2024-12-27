@@ -1,30 +1,84 @@
-// import { Typography } from '@mui/material'
-import Paper from '@mui/material/Paper'
-import Grid from '@mui/material/Grid2'
-import Box from '@mui/material/Box'
-import { experimentalStyled as styled } from '@mui/material/styles'
+import { Card, CardContent, CardMedia, Typography, Divider } from '@mui/material'
+import { Link } from 'react-router-dom'
 
-const Item = styled(Paper)(({ theme }) => ({
-   backgroundColor: '#fff',
-   ...theme.typography.body2,
-   padding: theme.spacing(2),
-   textAlign: 'center',
-   color: theme.palette.text.secondary,
-   ...theme.applyStyles('dark', {
-      backgroundColor: '#1A2027',
-   }),
-}))
-const PostList = () => {
+const PostList = ({ post, isAuthenticated, user }) => {
+   const { title, img, comment, UserId } = post
+
    return (
-      <Box sx={{ flexGrow: 1, marginTop: '100px' }}>
-         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-            {Array.from(Array(6)).map((_, index) => (
-               <Grid key={index} size={{ xs: 2, sm: 4, md: 4 }}>
-                  <Item>{index + 1}</Item>
-               </Grid>
-            ))}
-         </Grid>
-      </Box>
+      <Card sx={{ mb: 3, backgroundColor: 'black', borderRadius: '8px' }}>
+         {/* 카드 미리보기 이미지 */}
+         {img ? (
+            <Link to={`/post/detail/${post.id}`}>
+               <CardMedia
+                  component="img"
+                  height="200"
+                  image={process.env.REACT_APP_API_URL + img}
+                  alt={title}
+                  sx={{
+                     objectFit: 'cover',
+                     borderTopLeftRadius: '8px',
+                     borderTopRightRadius: '8px',
+                     backgroundColor: 'lightgray',
+                  }}
+               />
+            </Link>
+         ) : (
+            <Link to={`/post/detail/${post.id}`}>
+               <CardMedia
+                  component="img"
+                  height="200"
+                  image="/images/nophoto1.jpg"
+                  alt={title}
+                  sx={{
+                     objectFit: '',
+                     borderTopLeftRadius: '8px',
+                     borderTopRightRadius: '8px',
+                  }}
+               />
+            </Link>
+         )}
+
+         <CardContent sx={{ color: 'white' }}>
+            {/* 제목 */}
+            <Typography
+               variant="h6"
+               sx={{
+                  fontWeight: 'bold',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+               }}
+            >
+               {title}
+            </Typography>
+
+            {/* 설명 */}
+            <Typography
+               variant="body2"
+               sx={{
+                  mt: 1,
+                  mb: 2,
+                  fontSize: '14px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+               }}
+            >
+               {comment ? comment : '설명이 없습니다.'}
+            </Typography>
+         </CardContent>
+
+         <Divider sx={{ borderColor: '#444' }} />
+
+         <CardContent sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Link to={`/user/${UserId}`}>
+               <Typography variant="body2" sx={{ color: '#bbb' }}>
+                  작성자: {post?.User.nick}
+               </Typography>
+            </Link>
+         </CardContent>
+      </Card>
    )
 }
+
 export default PostList
