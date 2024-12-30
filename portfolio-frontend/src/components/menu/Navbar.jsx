@@ -86,7 +86,7 @@ const Navbar = ({ isAuthenticated, user }) => {
                      >
                         <MenuItem key={settings[0]} onClick={handleCloseUserMenu}>
                            <Typography sx={{ textAlign: 'center' }}>
-                              <Link to="/user">{settings[0]}</Link>
+                              <Link to={`/user/${user.id}`}>{settings[0]}</Link>
                            </Typography>
                         </MenuItem>
                         <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>

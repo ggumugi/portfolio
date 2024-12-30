@@ -30,8 +30,7 @@ function App() {
             <Route path="/post/edit/:id" element={<PostEdit />} />
             {/* <Route path="/post/detail/:id" element={<Postdetail />} /> */}
             <Route path="/post/detail/:id" element={<Postdetail isAuthenticated={isAuthenticated} user={user} />} />
-            <Route path="/user" element={<UserDetail isAuthenticated={isAuthenticated} user={user} />} />
-            <Route path="/user/:id" element={<UserDetail />} />
+            <Route path="/user/:id" element={<UserDetail isAuthenticated={isAuthenticated} user={user} />} />
          </Routes>
       </>
    )

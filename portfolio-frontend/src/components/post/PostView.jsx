@@ -1,10 +1,11 @@
-import { Paper, Box, Typography, IconButton, Button } from '@mui/material'
+import { Paper, Box, Typography, IconButton, Button, CircularProgress } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchPostByIdThunk } from '../../features/postSlice'
+import { fetchPostByIdThunk, deletePostThunk } from '../../features/postSlice'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import { Link } from 'react-router-dom'
 
 const PostView = ({ isAuthenticated, user }) => {
    const { id } = useParams()
@@ -16,10 +17,29 @@ const PostView = ({ isAuthenticated, user }) => {
       dispatch(fetchPostByIdThunk(id)) // 게시글 데이터를 불러옵니다.
    }, [dispatch, id])
 
-   const handleDelete = useCallback(() => {}, [])
+   const handleDelete = useCallback(
+      (id) => {
+         const confirmCancel = window.confirm('정말로 삭제하시겠습니까?')
+         if (confirmCancel) {
+            dispatch(deletePostThunk(id))
+               .unwrap()
+               .then(() => {
+                  window.location.href = `/user/${post.UserId}`
+               })
+               .catch((err) => {
+                  console.error('게시물 삭제 실패 : ', err)
+                  alert('게시물을 삭제할 수 없습니다.')
+               })
+         } else {
+            return
+         }
+      },
+      [dispatch, post?.UserId]
+   )
 
    // 로딩 중 또는 에러 처리
-   if (loading) return <p>로딩 중...</p>
+   if (loading) return <CircularProgress sx={{ display: 'block', margin: 'auto', mt: '20px' }} />
+
    if (error) return <p>에러발생 : {error}</p>
 
    return (
@@ -61,6 +81,28 @@ const PostView = ({ isAuthenticated, user }) => {
                   >
                      <ArrowBackIcon />
                   </IconButton>
+
+                  {/* 작성자 이름 */}
+                  <Typography
+                     variant="h6"
+                     sx={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        color: 'white', // 흰색 글씨로 설정
+                        fontWeight: 'normal',
+                        padding: '5px 10px', // 패딩 추가
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경 색 추가 (시인성을 높이기 위해)
+                        borderRadius: '5px', // 둥근 테두리 추가
+                     }}
+                  >
+                     <Link
+                        to={`/user/${post.User?.id}`}
+                        style={{ color: 'white', textDecoration: 'none' }} // 링크에 스타일 추가
+                     >
+                        작성자 : {post.User?.nick}
+                     </Link>
+                  </Typography>
 
                   {/* 제목 */}
                   <Typography
@@ -158,7 +200,7 @@ const PostView = ({ isAuthenticated, user }) => {
                      <Button
                         variant="contained"
                         color="error"
-                        onClick={handleDelete} // 삭제 처리
+                        onClick={() => handleDelete(id)} // 삭제 처리
                         sx={{
                            width: '30%', // 버튼 너비 조정
                            fontSize: '16px', // 글씨 크기

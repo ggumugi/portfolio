@@ -1,14 +1,36 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Box, Button, Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateAuthThunk } from '../../features/authSlice'
+import { getProfileIdThunk } from '../../features/pageSlice'
 
 const UserProfile = ({ isAuthenticated, user }) => {
+   const { id } = useParams()
    const dispatch = useDispatch()
    const navigate = useNavigate()
-   const [imagePreview, setImagePreview] = useState(`${process.env.REACT_APP_API_URL}/userUploads${user?.img}`)
-   const [imgFile, setImgFile] = useState(null) // 이미지 파일 객체
+   const { user: userId } = useSelector((state) => state.page)
+   const [imgFile, setImgFile] = useState(null)
+   const [imagePreview, setImagePreview] = useState(`${process.env.REACT_APP_API_URL}/userUploads${userId?.img}`)
+   const fetchProfileData = useCallback(() => {
+      if (id) {
+         dispatch(getProfileIdThunk(id))
+            .unwrap()
+            .catch((err) => {
+               console.error('사용자 정보 가져오는 중 오류 발생', err)
+               alert('사용자 정보 가져오기를 실패했습니다.', err)
+            })
+      }
+   }, [dispatch, id])
+   useEffect(() => {
+      fetchProfileData()
+   }, [fetchProfileData])
+
+   useEffect(() => {
+      if (userId?.img) {
+         setImagePreview(`${process.env.REACT_APP_API_URL}/userUploads${userId.img}`)
+      }
+   }, [userId])
 
    // 사진 업로드 핸들러
    const handleImageChange = useCallback((e) => {
@@ -38,7 +60,7 @@ const UserProfile = ({ isAuthenticated, user }) => {
             .unwrap()
             .then(() => {
                console.log(formData)
-               window.location.href = '/' // 성공 후 홈으로 이동
+               window.location.href = '/' // 성공 후 홈 화면
             })
             .catch((err) => {
                console.error('프로필 등록 실패: ', err)
@@ -96,43 +118,44 @@ const UserProfile = ({ isAuthenticated, user }) => {
                </Typography>
             )}
          </Box>
-
          {/* 사진 업로드 버튼 */}
-         <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-               variant="contained"
-               color="secondary"
-               component="label"
-               sx={{
-                  mb: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-               }}
-            >
-               프로필 업로드
-               <input type="file" name="img" accept="image/*" hidden onChange={handleImageChange} />
-            </Button>
+         {Number(id) === user?.id && (
+            <Box sx={{ display: 'flex', gap: 2 }}>
+               <Button
+                  variant="contained"
+                  color="secondary"
+                  component="label"
+                  sx={{
+                     mb: 2,
+                     display: 'flex',
+                     alignItems: 'center',
+                     gap: 1,
+                  }}
+               >
+                  프로필 업로드
+                  <input type="file" name="img" accept="image/*" hidden onChange={handleImageChange} />
+               </Button>
 
-            {/* 저장 버튼 */}
-            <Button
-               variant="contained"
-               color="secondary"
-               onClick={handleImageUpload}
-               sx={{
-                  mb: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-               }}
-            >
-               저장
-            </Button>
-         </Box>
+               {/* 저장 버튼 */}
+               <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleImageUpload}
+                  sx={{
+                     mb: 2,
+                     display: 'flex',
+                     alignItems: 'center',
+                     gap: 1,
+                  }}
+               >
+                  저장
+               </Button>
+            </Box>
+         )}
 
          {/* 사용자 이름 */}
          <Typography variant="h6" sx={{ color: 'white' }}>
-            {user?.nick}
+            {userId?.nick}
          </Typography>
       </Box>
    )

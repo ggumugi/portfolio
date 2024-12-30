@@ -134,6 +134,16 @@ export const getPosts = async (page) => {
       throw err
    }
 }
+// 특정 유저 게시물 가져오기
+export const getPostsByUserId = async (page, userid) => {
+   try {
+      const response = await portfolioApi.get(`/post/${userid}?page=${page}`)
+      return response
+   } catch (err) {
+      console.error(`API Request 오류 : ${err.message}`)
+      throw err
+   }
+}
 
 // 내 프로필 가져오기
 export const getProfile = async () => {

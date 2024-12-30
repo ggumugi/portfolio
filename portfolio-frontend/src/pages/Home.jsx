@@ -20,7 +20,7 @@ const Home = ({ isAuthenticated, user }) => {
       dispatch(fetchPostsThunk(page))
    }, [dispatch, page])
 
-   const filteredPosts = posts.filter(
+   const filteredPosts = posts?.filter(
       (post) => post.title.toLowerCase().replace(/\s+/g, '').includes(searchQuery.toLowerCase().replace(/\s+/g, '')) //
    )
 
