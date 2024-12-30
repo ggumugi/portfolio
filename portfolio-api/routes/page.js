@@ -18,7 +18,7 @@ router.get('/profile/:id', isLoggedIn, async (req, res) => {
       const userId = req.params.id // 사용자 id
       const user = await User.findOne({
          where: { id: userId },
-         attributes: ['id', 'nick', 'email', 'createdAt', 'updatedAt'],
+         attributes: ['id', 'nick', 'email', 'img', 'createdAt', 'updatedAt'],
       })
       if (!user) {
          return res.status(404).json({

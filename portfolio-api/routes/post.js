@@ -222,4 +222,49 @@ router.get('/', async (req, res) => {
    }
 })
 
+// 특정 유저 게시물 전체 불러오기
+router.get('/:id', async (req, res) => {
+   try {
+      const page = parseInt(req.query.page, 10) || 1
+      const limit = parseInt(req.query.limit, 10) || 6
+      const offset = (page - 1) * limit
+
+      const count = await Post.count({
+         where: { UserId: req.params.id },
+      })
+
+      const posts = await Post.findAll({
+         where: { UserId: req.params.id },
+         limit,
+         offset,
+         order: [['createdAt', 'DESC']],
+         include: [
+            {
+               model: User,
+               attributes: ['id', 'nick', 'email'],
+            },
+         ],
+      })
+
+      res.json({
+         success: true,
+         posts,
+         pagination: {
+            totalPosts: count,
+            currentPage: page,
+            totalPages: Math.ceil(count / limit),
+            limit,
+         },
+         message: '특정 유저 게시물 리스트 조회',
+      })
+   } catch (err) {
+      console.error(err)
+      res.status(500).json({
+         success: false,
+         message: '게시물 조회 실패',
+         error: err,
+      })
+   }
+})
+
 module.exports = router
