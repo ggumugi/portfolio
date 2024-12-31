@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { createPost, updatePost, deletePost, getPostById, getPosts, getPostsByUserId } from '../api/portfolioApi'
+import { createPost, updatePost, deletePost, getPostById, getPosts, getPostsByUserId, getPostsByLiked } from '../api/portfolioApi'
 
 // 게시물 등록 thunk
 export const createPostThunk = createAsyncThunk('posts/createPost', async (postData, { rejectWithValue }) => {
@@ -57,6 +57,16 @@ export const fetchPostsThunk = createAsyncThunk('posts/fetchPosts', async (page,
 export const fetchPostsByUserIdThunk = createAsyncThunk('posts/fetchPostsByUserId', async ({ page, id }, { rejectWithValue }) => {
    try {
       const response = await getPostsByUserId(page, id)
+      return response.data
+   } catch (err) {
+      return rejectWithValue(err.response?.data?.message || '유저 게시물 조회 실패')
+   }
+})
+
+// 관심글 게시물 리스트 가져오기
+export const getPostsByLikedThunk = createAsyncThunk('posts/getPostsByLiked', async ({ page, id }, { rejectWithValue }) => {
+   try {
+      const response = await getPostsByLiked(page, id)
       return response.data
    } catch (err) {
       return rejectWithValue(err.response?.data?.message || '유저 게시물 조회 실패')
@@ -149,6 +159,20 @@ const postSlice = createSlice({
             state.pagination = action.payload.pagination
          })
          .addCase(fetchPostsByUserIdThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+         })
+      builder
+         .addCase(getPostsByLikedThunk.pending, (state) => {
+            state.loading = true
+            state.error = null
+         })
+         .addCase(getPostsByLikedThunk.fulfilled, (state, action) => {
+            state.loading = false
+            state.posts = action.payload.posts
+            state.pagination = action.payload.pagination
+         })
+         .addCase(getPostsByLikedThunk.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload
          })

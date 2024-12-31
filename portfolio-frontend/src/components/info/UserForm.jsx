@@ -4,8 +4,7 @@ import Button from '@mui/material/Button'
 import Pagination from '@mui/material/Pagination'
 import ButtonGroup from '@mui/material/ButtonGroup'
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
-import Grid from '@mui/material/Grid'
+import Grid2 from '@mui/material/Grid2'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { styled } from '@mui/material/styles'
@@ -14,7 +13,7 @@ import Typography from '@mui/material/Typography'
 import { updateAuthThunk } from '../../features/authSlice'
 import { useNavigate, useParams } from 'react-router-dom'
 import PostList from '../post/PostList'
-import { fetchPostsByUserIdThunk } from '../../features/postSlice'
+import { fetchPostsByUserIdThunk, getPostsByLikedThunk } from '../../features/postSlice'
 
 const CustomTextField = styled(TextField)({
    '& .MuiInputLabel-root': {
@@ -39,20 +38,6 @@ const CustomTextField = styled(TextField)({
    },
 })
 
-const Item = styled(Paper)(({ theme }) => ({
-   backgroundColor: '#fff',
-   ...theme.typography.body2,
-   padding: theme.spacing(3), // padding을 더 크게 설정하여 크기 키우기
-   textAlign: 'center',
-   color: theme.palette.text.secondary,
-   display: 'flex', // flexbox로 정렬
-   justifyContent: 'center', // 가로 중앙 정렬
-   alignItems: 'center', // 세로 중앙 정렬
-   ...theme.applyStyles('dark', {
-      backgroundColor: '#1A2027',
-   }),
-}))
-
 const UserForm = ({ isAuthenticated, user }) => {
    const { id } = useParams()
    const dispatch = useDispatch()
@@ -67,6 +52,9 @@ const UserForm = ({ isAuthenticated, user }) => {
    useEffect(() => {
       if (selectedButton === '게시글') {
          dispatch(fetchPostsByUserIdThunk({ page, id }))
+      }
+      if (selectedButton === '관심글') {
+         dispatch(getPostsByLikedThunk({ page, id }))
       }
    }, [dispatch, page, id, selectedButton])
 
@@ -186,13 +174,13 @@ const UserForm = ({ isAuthenticated, user }) => {
                <>
                   {posts.length > 0 ? (
                      <>
-                        <Grid container spacing={3} sx={{ mt: 3 }}>
+                        <Grid2 container spacing={3} sx={{ mt: 3 }}>
                            {posts.map((post) => (
-                              <Grid item xs={12} sm={6} md={4} key={post.id}>
+                              <Grid2 item xs={12} sm={6} md={4} key={post.id}>
                                  <PostList post={post} isAuthenticated={isAuthenticated} user={user} />
-                              </Grid>
+                              </Grid2>
                            ))}
-                        </Grid>
+                        </Grid2>
 
                         <Stack spacing={6} sx={{ mt: 3, alignItems: 'center' }}>
                            <Pagination
@@ -234,15 +222,42 @@ const UserForm = ({ isAuthenticated, user }) => {
                </Container>
             )}
             {selectedButton === '관심글' && (
-               <Box sx={{ flexGrow: 1, mt: '50px' }}>
-                  <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent="center">
-                     {Array.from(Array(6)).map((_, index) => (
-                        <Grid key={index} size={{ xs: 2, sm: 4, md: 4 }} display="flex" justifyContent="center">
-                           <Item sx={{ width: '300px', height: '100px' }}>{index + 1}</Item>
-                        </Grid>
-                     ))}
-                  </Grid>
-               </Box>
+               <>
+                  {posts.length > 0 ? (
+                     <>
+                        <Grid2 container spacing={3} sx={{ mt: 3 }}>
+                           {posts?.map((liked) => (
+                              <Grid2 item xs={12} sm={6} md={4} key={liked?.Post?.id}>
+                                 <PostList post={liked?.Post} isAuthenticated={isAuthenticated} user={user} />
+                              </Grid2>
+                           ))}
+                        </Grid2>
+
+                        <Stack spacing={6} sx={{ mt: 3, alignItems: 'center' }}>
+                           <Pagination
+                              sx={{
+                                 '& .MuiPaginationItem-root': {
+                                    color: 'white',
+                                 },
+                                 '& .MuiPaginationItem-root.Mui-selected': {
+                                    backgroundColor: 'white',
+                                    color: 'black',
+                                 },
+                              }}
+                              count={pagination.totalPages}
+                              page={page}
+                              onChange={handlePageChange}
+                           />
+                        </Stack>
+                     </>
+                  ) : (
+                     !loading && (
+                        <Typography variant="body1" align="center" sx={{ mt: '30px', color: 'white' }}>
+                           게시물이 없습니다.
+                        </Typography>
+                     )
+                  )}
+               </>
             )}
          </Box>
       </Box>

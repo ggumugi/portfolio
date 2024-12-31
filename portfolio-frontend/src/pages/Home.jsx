@@ -7,7 +7,7 @@ import PostList from '../components/post/PostList'
 import { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPostsThunk } from '../features/postSlice'
-import Grid from '@mui/material/Grid'
+import Grid2 from '@mui/material/Grid2'
 
 const Home = ({ isAuthenticated, user }) => {
    const [page, setPage] = useState(1)
@@ -21,7 +21,7 @@ const Home = ({ isAuthenticated, user }) => {
    }, [dispatch, page])
 
    const filteredPosts = posts?.filter(
-      (post) => post.title.toLowerCase().replace(/\s+/g, '').includes(searchQuery.toLowerCase().replace(/\s+/g, '')) //
+      (post) => post.title?.toLowerCase().replace(/\s+/g, '').includes(searchQuery.toLowerCase().replace(/\s+/g, '')) //
    )
 
    const handleSearchChange = (e) => {
@@ -76,13 +76,17 @@ const Home = ({ isAuthenticated, user }) => {
 
          {filteredPostsToDisplay.length > 0 ? (
             <>
-               <Grid container spacing={3} sx={{ mt: 3 }}>
+               <Grid2 container spacing={3} sx={{ mt: 10 }}>
+                  {' '}
+                  {/* Grid2로 변경 */}
                   {filteredPostsToDisplay.map((post) => (
-                     <Grid item xs={12} sm={6} md={4} key={post.id}>
+                     <Grid2 item xs={12} sm={6} md={4} key={post.id}>
+                        {' '}
+                        {/* Grid2로 변경 */}
                         <PostList post={post} isAuthenticated={isAuthenticated} user={user} />
-                     </Grid>
+                     </Grid2>
                   ))}
-               </Grid>
+               </Grid2>
 
                <Stack spacing={6} sx={{ mt: 3, alignItems: 'center' }}>
                   <Pagination

@@ -292,7 +292,7 @@ router.get('/liked/:id', async (req, res) => {
                include: [
                   {
                      model: User,
-                     attributes: ['id', 'username', 'email'],
+                     attributes: ['id', 'nick', 'email'],
                   },
                ],
             },

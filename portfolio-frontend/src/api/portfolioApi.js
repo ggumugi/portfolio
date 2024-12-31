@@ -148,7 +148,7 @@ export const getPostsByUserId = async (page, userid) => {
 // 관심글 게시물 가져오기
 export const getPostsByLiked = async (page, userid) => {
    try {
-      const response = await portfolioApi.get(`/post/user/${userid}?page=${page}`)
+      const response = await portfolioApi.get(`/post/liked/${userid}?page=${page}`)
       return response
    } catch (err) {
       console.error(`API Request 오류 : ${err.message}`)
