@@ -13,7 +13,7 @@ router.get('/profile', isLoggedIn, async (req, res) => {
 })
 
 // 특정인 프로필 조회
-router.get('/profile/:id', isLoggedIn, async (req, res) => {
+router.get('/profile/:id', async (req, res) => {
    try {
       const userId = req.params.id // 사용자 id
       const user = await User.findOne({

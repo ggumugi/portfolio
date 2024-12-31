@@ -4,7 +4,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPostByIdThunk, deletePostThunk } from '../../features/postSlice'
+import { checkLikeThunk, addLikeThunk, removeLikeThunk } from '../../features/likedSlice'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import FavoriteIcon from '@mui/icons-material/Favorite'
 import { Link } from 'react-router-dom'
 
 const PostView = ({ isAuthenticated, user }) => {
@@ -12,10 +14,20 @@ const PostView = ({ isAuthenticated, user }) => {
    const navigate = useNavigate()
    const dispatch = useDispatch()
    const { post, loading, error } = useSelector((state) => state.posts)
+   const { liked } = useSelector((state) => state.liked)
 
    useEffect(() => {
-      dispatch(fetchPostByIdThunk(id)) // 게시글 데이터를 불러옵니다.
+      dispatch(fetchPostByIdThunk(id))
+      dispatch(checkLikeThunk(id))
    }, [dispatch, id])
+
+   const handleLiked = useCallback(() => {
+      if (liked) {
+         dispatch(removeLikeThunk(id))
+      } else {
+         dispatch(addLikeThunk(id))
+      }
+   }, [dispatch, liked, id])
 
    const handleDelete = useCallback(
       (id) => {
@@ -24,7 +36,7 @@ const PostView = ({ isAuthenticated, user }) => {
             dispatch(deletePostThunk(id))
                .unwrap()
                .then(() => {
-                  window.location.href = `/user/${post.UserId}`
+                  window.location.href = `/user/${user?.id}`
                })
                .catch((err) => {
                   console.error('게시물 삭제 실패 : ', err)
@@ -34,7 +46,7 @@ const PostView = ({ isAuthenticated, user }) => {
             return
          }
       },
-      [dispatch, post?.UserId]
+      [dispatch, user?.id]
    )
 
    // 로딩 중 또는 에러 처리
@@ -222,18 +234,33 @@ const PostView = ({ isAuthenticated, user }) => {
                      }}
                   >
                      {/* 좋아요 버튼 */}
-                     <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => {}} // 수정 페이지로 이동
-                        sx={{
-                           width: '30%', // 버튼 너비 조정
-                           fontSize: '16px', // 글씨 크기
-                        }}
-                     >
-                        <FavoriteBorderIcon />
-                        &nbsp; 좋아요
-                     </Button>
+                     {liked ? (
+                        <Button
+                           variant="contained"
+                           color="secondary"
+                           onClick={handleLiked} // 수정 페이지로 이동
+                           sx={{
+                              width: '30%', // 버튼 너비 조정
+                              fontSize: '16px', // 글씨 크기
+                           }}
+                        >
+                           <FavoriteIcon />
+                           &nbsp; 좋아요
+                        </Button>
+                     ) : (
+                        <Button
+                           variant="contained"
+                           color="primary"
+                           onClick={handleLiked} // 수정 페이지로 이동
+                           sx={{
+                              width: '30%', // 버튼 너비 조정
+                              fontSize: '16px', // 글씨 크기
+                           }}
+                        >
+                           <FavoriteBorderIcon />
+                           &nbsp; 좋아요
+                        </Button>
+                     )}
                   </Box>
                )}
             </Box>

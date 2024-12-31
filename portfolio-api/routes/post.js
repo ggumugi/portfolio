@@ -2,7 +2,7 @@ const express = require('express')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
-const { Post, liked, User } = require('../models')
+const { Post, Liked, User } = require('../models')
 const { isLoggedIn } = require('./middlewares')
 const router = express.Router()
 
@@ -73,8 +73,11 @@ router.put('/:id', isLoggedIn, upload.single('img'), async (req, res) => {
       }
 
       await post.update({
-         content: req.body.content,
+         title: req.body.title,
+         comment: req.body.comment,
+
          img: req.file ? `/${req.file.filename}` : post.img, // 수정된 이미지 파일이 있으면 교체 없으면 기존
+         projectUrl: req.body.projectUrl,
       })
       // 업데이트 후 게시물 조회
       const updatedPost = await Post.findOne({
@@ -223,7 +226,7 @@ router.get('/', async (req, res) => {
 })
 
 // 특정 유저 게시물 전체 불러오기
-router.get('/:id', async (req, res) => {
+router.get('/user/:id', async (req, res) => {
    try {
       const page = parseInt(req.query.page, 10) || 1
       const limit = parseInt(req.query.limit, 10) || 6
@@ -262,6 +265,56 @@ router.get('/:id', async (req, res) => {
       res.status(500).json({
          success: false,
          message: '게시물 조회 실패',
+         error: err,
+      })
+   }
+})
+
+// 관심글 게시물 전체 불로오기
+router.get('/liked/:id', async (req, res) => {
+   try {
+      const page = parseInt(req.query.page, 10) || 1
+      const limit = parseInt(req.query.limit, 10) || 6
+      const offset = (page - 1) * limit
+
+      const count = await Liked.count({
+         where: { UserId: req.params.id },
+      })
+
+      const posts = await Liked.findAll({
+         where: { UserId: req.params.id },
+         limit,
+         offset,
+         order: [['createdAt', 'DESC']],
+         include: [
+            {
+               model: Post,
+               include: [
+                  {
+                     model: User,
+                     attributes: ['id', 'username', 'email'],
+                  },
+               ],
+            },
+         ],
+      })
+
+      res.json({
+         success: true,
+         posts,
+         pagination: {
+            totalPosts: count,
+            currentPage: page,
+            totalPages: Math.ceil(count / limit),
+            limit,
+         },
+         message: '관심 게시물 리스트 조회',
+      })
+   } catch (err) {
+      console.error(err)
+      res.status(500).json({
+         success: false,
+         message: '관심 게시물 조회 실패',
          error: err,
       })
    }

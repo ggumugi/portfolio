@@ -137,7 +137,18 @@ export const getPosts = async (page) => {
 // 특정 유저 게시물 가져오기
 export const getPostsByUserId = async (page, userid) => {
    try {
-      const response = await portfolioApi.get(`/post/${userid}?page=${page}`)
+      const response = await portfolioApi.get(`/post/user/${userid}?page=${page}`)
+      return response
+   } catch (err) {
+      console.error(`API Request 오류 : ${err.message}`)
+      throw err
+   }
+}
+
+// 관심글 게시물 가져오기
+export const getPostsByLiked = async (page, userid) => {
+   try {
+      const response = await portfolioApi.get(`/post/user/${userid}?page=${page}`)
       return response
    } catch (err) {
       console.error(`API Request 오류 : ${err.message}`)
@@ -160,6 +171,39 @@ export const getProfile = async () => {
 export const getProfileId = async (id) => {
    try {
       const response = await portfolioApi.get(`/page/profile/${id}`)
+      return response
+   } catch (err) {
+      console.error(`API Request 오류 : ${err.message}`)
+      throw err
+   }
+}
+
+// 좋아요 등록
+export const addLike = async (postId) => {
+   try {
+      const response = await portfolioApi.post(`/liked/${postId}/add`)
+      return response
+   } catch (err) {
+      console.error(`API Request 오류 : ${err.message}`)
+      throw err
+   }
+}
+
+// 좋아요 삭제
+export const removeLike = async (postId) => {
+   try {
+      const response = await portfolioApi.delete(`/liked/${postId}/sub`)
+      return response
+   } catch (err) {
+      console.error(`API Request 오류 : ${err.message}`)
+      throw err
+   }
+}
+
+// 좋아요 확인
+export const checkLike = async (postId) => {
+   try {
+      const response = await portfolioApi.get(`/liked/${postId}/check`)
       return response
    } catch (err) {
       console.error(`API Request 오류 : ${err.message}`)

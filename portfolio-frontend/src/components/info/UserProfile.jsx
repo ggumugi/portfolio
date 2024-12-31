@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Box, Button, Typography } from '@mui/material'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateAuthThunk } from '../../features/authSlice'
 import { getProfileIdThunk } from '../../features/pageSlice'
@@ -8,7 +8,6 @@ import { getProfileIdThunk } from '../../features/pageSlice'
 const UserProfile = ({ isAuthenticated, user }) => {
    const { id } = useParams()
    const dispatch = useDispatch()
-   const navigate = useNavigate()
    const { user: userId } = useSelector((state) => state.page)
    const [imgFile, setImgFile] = useState(null)
    const [imagePreview, setImagePreview] = useState(`${process.env.REACT_APP_API_URL}/userUploads${userId?.img}`)
@@ -69,13 +68,6 @@ const UserProfile = ({ isAuthenticated, user }) => {
       },
       [imgFile, dispatch]
    )
-
-   useEffect(() => {
-      if (!isAuthenticated) {
-         alert('로그인이 필요합니다.')
-         navigate('/login')
-      }
-   }, [isAuthenticated, navigate])
 
    return (
       <Box

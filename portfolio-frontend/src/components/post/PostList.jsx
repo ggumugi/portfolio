@@ -5,20 +5,31 @@ const PostList = ({ post, isAuthenticated, user }) => {
    const { title, img, comment, UserId } = post
 
    return (
-      <Card sx={{ mb: 3, backgroundColor: 'black', borderRadius: '8px' }}>
+      <Card
+         sx={{
+            margin: 'auto',
+            mb: 3,
+            backgroundColor: 'black',
+            borderRadius: '8px',
+            height: '330px', // 카드 높이 줄이기
+            width: '350px', // 카드 너비 100%로 설정
+            display: 'flex',
+            flexDirection: 'column', // 콘텐츠 세로 정렬
+         }}
+      >
          {/* 카드 미리보기 이미지 */}
          {img ? (
             <Link to={`/post/detail/${post.id}`}>
                <CardMedia
                   component="img"
-                  height="200"
+                  height="200px"
                   image={process.env.REACT_APP_API_URL + img}
                   alt={title}
                   sx={{
-                     objectFit: 'cover',
+                     objectFit: 'container',
                      borderTopLeftRadius: '8px',
                      borderTopRightRadius: '8px',
-                     backgroundColor: 'lightgray',
+                     backgroundColor: '#f0f0f0',
                   }}
                />
             </Link>
@@ -26,19 +37,20 @@ const PostList = ({ post, isAuthenticated, user }) => {
             <Link to={`/post/detail/${post.id}`}>
                <CardMedia
                   component="img"
-                  height="200"
+                  height="200px"
                   image="/images/nophoto1.jpg"
                   alt={title}
                   sx={{
-                     objectFit: '',
+                     objectFit: 'cover',
                      borderTopLeftRadius: '8px',
                      borderTopRightRadius: '8px',
+                     backgroundColor: '#f0f0f0',
                   }}
                />
             </Link>
          )}
 
-         <CardContent sx={{ color: 'white' }}>
+         <CardContent sx={{ color: 'white', flexGrow: 1, padding: '10px' }}>
             {/* 제목 */}
             <Typography
                variant="h6"
@@ -47,6 +59,7 @@ const PostList = ({ post, isAuthenticated, user }) => {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
+                  fontSize: '16px',
                }}
             >
                {title}
@@ -58,7 +71,7 @@ const PostList = ({ post, isAuthenticated, user }) => {
                sx={{
                   mt: 1,
                   mb: 2,
-                  fontSize: '14px',
+                  fontSize: '12px', // 설명 크기 줄이기
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',

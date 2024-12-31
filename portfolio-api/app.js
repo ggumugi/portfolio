@@ -12,6 +12,7 @@ const indexRouter = require('./routes')
 const authRouter = require('./routes/auth')
 const postRouter = require('./routes/post')
 const pageRouter = require('./routes/page')
+const likedRouter = require('./routes/liked')
 const { sequelize } = require('./models')
 const passportConfig = require('./passport') // passport 폴더의 index.js
 
@@ -60,6 +61,7 @@ app.use('/', indexRouter)
 app.use('/auth', authRouter)
 app.use('/post', postRouter)
 app.use('/page', pageRouter)
+app.use('/liked', likedRouter)
 
 app.use((req, res, next) => {
    const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`)

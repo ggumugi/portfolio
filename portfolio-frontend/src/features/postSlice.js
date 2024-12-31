@@ -18,7 +18,7 @@ export const updatePostThunk = createAsyncThunk('posts/updatePost', async (data,
       const response = await updatePost(id, postData)
       return response.data.post
    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || '게시물 삭제 실패')
+      return rejectWithValue(err.response?.data?.message || '게시물 수정 실패')
    }
 })
 

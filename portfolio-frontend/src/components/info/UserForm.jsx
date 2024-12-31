@@ -104,11 +104,6 @@ const UserForm = ({ isAuthenticated, user }) => {
       setPage(value)
    }, [])
 
-   if (!isAuthenticated) {
-      // isAuthenticated가 false면 아무것도 렌더링하지 않고 null 반환
-      return null
-   }
-
    return (
       <Box
          sx={{
@@ -120,6 +115,7 @@ const UserForm = ({ isAuthenticated, user }) => {
             },
          }}
       >
+         {/* 버튼 그룹 */}
          <ButtonGroup
             variant="outlined"
             aria-label="Basic button group"
@@ -188,10 +184,10 @@ const UserForm = ({ isAuthenticated, user }) => {
          <Box sx={{ mt: '10px' }}>
             {selectedButton === '게시글' && (
                <>
-                  {posts?.length > 0 ? (
+                  {posts.length > 0 ? (
                      <>
                         <Grid container spacing={3} sx={{ mt: 3 }}>
-                           {posts?.map((post) => (
+                           {posts.map((post) => (
                               <Grid item xs={12} sm={6} md={4} key={post.id}>
                                  <PostList post={post} isAuthenticated={isAuthenticated} user={user} />
                               </Grid>
