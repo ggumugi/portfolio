@@ -3,6 +3,7 @@ import authReducer from '../features/authSlice'
 import postReducer from '../features/postSlice'
 import pageReducer from '../features/pageSlice'
 import likedReducer from '../features/likedSlice'
+import notiReducer from '../features/notiSlice'
 
 const store = configureStore({
    reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
       posts: postReducer,
       page: pageReducer,
       liked: likedReducer,
+      noti: notiReducer,
    },
 })
 

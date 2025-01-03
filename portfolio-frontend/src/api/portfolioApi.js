@@ -210,3 +210,38 @@ export const checkLike = async (postId) => {
       throw err
    }
 }
+
+// 알림추가
+export const addNotification = async (postId) => {
+   try {
+      const response = await portfolioApi.post(`/noti/${postId}`)
+      return response
+   } catch (err) {
+      console.error(`API Request 오류 : ${err.message}`)
+      throw err
+   }
+}
+
+// 알림 읽음 처리
+export const removeNotification = async (id) => {
+   try {
+      const response = await portfolioApi.put(`/noti/${id}`, {
+         data: { isRead: true },
+      })
+      return response
+   } catch (err) {
+      console.error(`API Request 오류 : ${err.message}`)
+      throw err
+   }
+}
+
+// 알림 확인
+export const checkNotification = async () => {
+   try {
+      const response = await portfolioApi.get(`/noti`)
+      return response
+   } catch (err) {
+      console.error(`API Request 오류 : ${err.message}`)
+      throw err
+   }
+}

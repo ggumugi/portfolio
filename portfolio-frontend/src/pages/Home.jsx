@@ -78,11 +78,9 @@ const Home = ({ isAuthenticated, user }) => {
             <>
                <Grid2 container spacing={3} sx={{ mt: 10 }}>
                   {' '}
-                  {/* Grid2로 변경 */}
                   {filteredPostsToDisplay.map((post) => (
-                     <Grid2 item xs={12} sm={6} md={4} key={post.id}>
+                     <Grid2 xs={12} sm={6} md={4} key={post.id}>
                         {' '}
-                        {/* Grid2로 변경 */}
                         <PostList post={post} isAuthenticated={isAuthenticated} user={user} />
                      </Grid2>
                   ))}
