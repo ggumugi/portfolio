@@ -149,11 +149,7 @@ router.get('/logout', isLoggedIn, async (req, res, next) => {
 router.patch('/update', isLoggedIn, upload.single('img'), async (req, res, next) => {
    const { nick, password } = req.body
    const userId = req.user.id
-
    try {
-      // 사용자 정보를 업데이트하려면 먼저 사용자를 찾는다
-      const user = await User.findOne({ where: { id: userId } })
-      console.log('파일정보 : ', req.file)
       if (!req.file && !password && !nick) {
          // 업로드된 파일이 없거나 이상이 있어 파일 정보가 넘어오지 않는 경우
          return res.status(400).json({
@@ -161,6 +157,8 @@ router.patch('/update', isLoggedIn, upload.single('img'), async (req, res, next)
             message: '파일이 존재하지 않거나 이상합니다.',
          })
       }
+
+      const user = await User.findOne({ where: { id: userId } })
 
       if (!user) {
          return res.status(404).json({
