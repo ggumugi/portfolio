@@ -169,8 +169,6 @@ router.get('/:id', async (req, res) => {
 // 전체 게시물 불러오기(페이징 기능)
 router.get('/', async (req, res) => {
    try {
-      // parseInt('08') > 일부 브라우저에서 NaN 반환
-      // parseInt('08',10) > 10진수 8을 반환
       const page = parseInt(req.query.page, 10) || 1 // page 번호 기본값 = 1
       const limit = parseInt(req.query.limit, 10) || 6 // 한 페이지 당 나타낼 객체 갯수
       const offset = (page - 1) * limit
@@ -180,22 +178,10 @@ router.get('/', async (req, res) => {
       const count = await Post.count()
 
       // 게시물 레코드 가져오기
-      /*
-      page:1, limit: 3 일 경우 offset: 0
-      select * from posts order by createAt desc limit 3 offset 0
-
-      page:2, limit: 3 일 경우 offset: 3
-      select * from posts order by createAt desc limit 3 offset 3
-
-      page:3, limit: 3 일 경우 offset: 6
-      select * from posts order by createAt desc limit 3 offset 6
-      offset - 건너뛰기
-      */
       const posts = await Post.findAll({
          limit,
          offset,
          order: [['createdAt', 'DESC']], // createdAt (기본) : 최신 날짜 순으로 가져온다
-         // 게시글을 작성한 사람과 게시글에 작성된 해시태그를 같이 가져온다
          include: [
             {
                model: User,
