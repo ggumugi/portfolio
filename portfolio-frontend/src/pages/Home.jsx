@@ -54,7 +54,7 @@ const Home = ({ isAuthenticated, user }) => {
                p: '2px 4px',
                display: 'flex',
                alignItems: 'center',
-               width: 600,
+               maxWidth: '620px',
                margin: 'auto',
                marginTop: '100px',
             }}
